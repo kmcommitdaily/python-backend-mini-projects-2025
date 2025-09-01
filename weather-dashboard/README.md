@@ -73,8 +73,8 @@ This app fetches real-time weather data from the **OpenWeatherMap API** and disp
 3. Open your browser at http://localhost:3000 to see the dashboard.
 
 ### API Endpoint
-```bash
-`GET /weather?city={city_name}`
+    ```bash
+    `GET /weather?city={city_name}`
 
 ### **_ Response JSON Example: _**
 
@@ -87,9 +87,12 @@ This app fetches real-time weather data from the **OpenWeatherMap API** and disp
   "wind": 5,
   "visibility": 10000,
   "weather": "clear sky"
-}
+} 
+```
 
-***Screenshots***
+
+
+### ***Screenshots***
 ![Dashboard Screenshot](assets/weather-dashboard.png)
 
 
@@ -101,4 +104,4 @@ This app fetches real-time weather data from the **OpenWeatherMap API** and disp
 ### AUTHOR
 
 Kimberly Galos
-```
+
