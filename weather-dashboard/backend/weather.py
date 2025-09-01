@@ -12,7 +12,7 @@ def get_weather(city: str):
         raise Exception("City name is required")
     
     response = requests.get(
-        f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units={unit}"
+        f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units=metric"
     )
     
     if response.status_code == 200:

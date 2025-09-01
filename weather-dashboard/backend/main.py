@@ -1,16 +1,21 @@
+from fastapi import FastAPI, HTTPException
 from weather import get_weather
+from fastapi.middleware.cors import CORSMiddleware
 
-city = input("Enter city: ")
-data = get_weather(city)
+app = FastAPI()
 
-wind_speed = data["wind"]
-wind_kmh = wind_speed * 3.6
-visibility_m = data["visibility"]
-visibility_km = visibility_m / 1000
-print(f"City: {data['city']}")
-print(f"Temp: {data['temp']} °C")
-print(f"Feels Like: {data['feels_like']} °C")
-print(f"Humidity: {data['humidity']} %")
-print(f"Wind: {wind_kmh:.1f} km/h")
-print(f"Visibility: {visibility_km:.1f} km")
-print(f"Weather: {data['weather']}")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In dev, allow all origins (React, V0, etc.)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/weather")
+def weather_endpoint(city: str):
+    try: 
+        return get_weather(city)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
