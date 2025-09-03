@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 import requests
-from pprint import pprint
+
 
 load_dotenv()
 
@@ -19,8 +19,17 @@ def get_movie(title: str):
         raise Exception("Error fetching data")
     
     data = response.json()
-    titles = []
+    movies = []
+
     if "Search" in data:
         for movie in data["Search"]:
-            titles.append(movie["Title"])
-    return titles
+            movies.append({
+                "imdbID": movie["imdbID"],
+                "Title": movie["Title"],
+                "Year": movie["Year"],
+                "Type": movie["Type"],
+                "Poster": movie["Poster"]
+})
+    return movies
+    
+
