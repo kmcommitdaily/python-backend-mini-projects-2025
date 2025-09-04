@@ -8,9 +8,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 interface Movie {
-  imdbID: string; // use this as the unique id
-  Title: string; // note the capital T
-  Year: string; // keep as string to match API
+  imdbID: string; 
+  Title: string; 
+  Year: string; 
   Type: string;
   Poster: string;
 }
@@ -20,6 +20,27 @@ export default function MovieFavoritesApp() {
   const [favorites, setFavorites] = useState<Movie[]>([]);
   const [showFavorites, setShowFavorites] = useState(false);
   const [movies, setMovies] = useState<Movie[]>([]);
+
+  // load saved favorites from backend on mount
+
+  async function loadFavorites() {
+    try {
+      const res = await fetch("http://localhost:8000/favorites");
+      if (!res.ok) {
+        console.error("Failed to load favorites", res.status);
+        return;
+      }
+      const data: Movie[] = await res.json();
+      setFavorites(data);
+    } catch (err) {
+      console.error("Error fetching favorites:", err);
+    }
+  }
+
+  // useEffect calls it on mount
+  useEffect(() => {
+    loadFavorites();
+  }, []);
 
   useEffect(() => {
     async function fetchMovies() {
@@ -38,20 +59,52 @@ export default function MovieFavoritesApp() {
     }
     fetchMovies();
   }, [searchTerm]);
+
   const filteredMovies = movies.filter(
     (movie) =>
       movie.Title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       movie.Type.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const addToFavorites = (movie: Movie) => {
-    if (!favorites.find((fav) => fav.imdbID === movie.imdbID)) {
-      setFavorites([...favorites, movie]);
+  const addToFavorites = async (movie: Movie) => {
+    try {
+      const res = await fetch("http://localhost:8000/favorites", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(movie), // send the whole movie object
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        console.error("Failed to add favorite:", err);
+        return;
+      }
+
+      await loadFavorites(); // update state with the saved movie
+    } catch (error) {
+      console.error("Error adding favorite:", error);
     }
   };
 
-  const removeFromFavorites = (movieId: string) => {
-    setFavorites(favorites.filter((fav) => fav.imdbID !== movieId));
+  const removeFromFavorites = async (movieId: string) => {
+    try {
+      const res = await fetch(`http://localhost:8000/favorites/${movieId}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        console.error("Failed to remove favorite:", err);
+        return;
+      }
+
+      // update state only if backend delete worked
+      await loadFavorites();
+    } catch (error) {
+      console.error("Error removing favorite:", error);
+    }
   };
 
   const MovieCard = ({
@@ -69,10 +122,7 @@ export default function MovieFavoritesApp() {
             alt={movie.Title}
             className="w-full h-64 object-cover rounded-t-lg"
           />
-          {/* <Badge className="absolute top-2 right-2 bg-primary/90 text-primary-foreground">
-            <Star className="w-3 h-3 mr-1" />
-            {movie.rating}
-          </Badge> */}
+    
         </div>
         <div className="p-4 space-y-3">
           <div>
@@ -84,10 +134,7 @@ export default function MovieFavoritesApp() {
                 <Calendar className="w-3 h-3" />
                 {movie.Year}
               </span>
-              {/* <span className="flex items-center gap-1">
-                <Clock className="w-3 h-3" />
-                {movie.runtime}m
-              </span> */}
+            
             </div>
           </div>
           <Badge variant="secondary" className="text-xs">
