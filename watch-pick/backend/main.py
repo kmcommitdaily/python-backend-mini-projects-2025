@@ -36,10 +36,10 @@ class FavoriteCreate(BaseModel):
     Type: str
     Poster: str
 
-
+#POST Favorites
 @app.post("/favorites")
 def add_favorite(fav: FavoriteCreate, db: Session = Depends(get_db)):
-    # check if already exists
+   
     existing = db.query(models.Favorite).filter(models.Favorite.imdbID == fav.imdbID).first()
     if existing:
         raise HTTPException(status_code=409, detail="Movie already in favorites")
@@ -62,7 +62,7 @@ def add_favorite(fav: FavoriteCreate, db: Session = Depends(get_db)):
         "Type": new_fav.type,
         "Poster": new_fav.poster,
     }
-
+#GET Movies
 @app.get("/movies")
 
 def movies_endpoint(title: str):
@@ -70,7 +70,8 @@ def movies_endpoint(title: str):
         return get_movie(title)
     except Exception as e:
         raise HTTPException(status_code=400,  detail=str(e))
-
+    
+#GET Favorites
 @app.get("/favorites")
 def read_favorites(db: Session = Depends(get_db)):
     favorites = db.query(models.Favorite).all()

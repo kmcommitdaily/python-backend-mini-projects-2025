@@ -5,7 +5,7 @@ from sqlalchemy.orm import declarative_base
 Base = declarative_base()
 
 class Favorite(Base):
-    __tablename__ = "favorites"  # the actual table name in the DB
+    __tablename__ = "favorites"  
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     imdbID = Column(String, unique=True, index=True)

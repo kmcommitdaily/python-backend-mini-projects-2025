@@ -8,9 +8,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 interface Movie {
-  imdbID: string; 
-  Title: string; 
-  Year: string; 
+  imdbID: string;
+  Title: string;
+  Year: string;
   Type: string;
   Poster: string;
 }
@@ -122,7 +122,6 @@ export default function MovieFavoritesApp() {
             alt={movie.Title}
             className="w-full h-64 object-cover rounded-t-lg"
           />
-    
         </div>
         <div className="p-4 space-y-3">
           <div>
@@ -134,7 +133,6 @@ export default function MovieFavoritesApp() {
                 <Calendar className="w-3 h-3" />
                 {movie.Year}
               </span>
-            
             </div>
           </div>
           <Badge variant="secondary" className="text-xs">
@@ -174,7 +172,7 @@ export default function MovieFavoritesApp() {
       <header className="sticky top-0 z-50 bg-primary text-primary-foreground shadow-lg">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between gap-4">
-            <h1 className="text-2xl font-bold">MovieFaves</h1>
+            <h1 className="text-2xl font-bold">WatchPick</h1>
 
             <div className="flex-1 max-w-md">
               <div className="relative">
