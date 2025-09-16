@@ -20,7 +20,6 @@ def get_movie(title: str):
     
     data = response.json()
     movies = []
-
     if "Search" in data:
         for movie in data["Search"]:
             movies.append({
