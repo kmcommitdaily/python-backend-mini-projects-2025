@@ -118,11 +118,56 @@ def logout(current_user: models.User = Depends(get_current_user), db: Session = 
 
 # --- Protected Endpoints ---
 @app.get("/news")
-def read_news(current_user: models.User = Depends(get_current_user)):
+def read_news(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
     try:
-        return get_news_headlines()
+        articles = get_news_headlines()
+
+        saved_articles = []
+        for article in articles:
+            # Check if article already exists (avoid duplicates)
+            existing = db.query(models.News).filter(
+                models.News.title == article["title"],
+                models.News.publishedAt == article["publishedAt"]
+            ).first()
+
+            if not existing:
+                new_article = models.News(
+                    title=article["title"],
+                    summary=article["summary"],
+                    content=article["content"],
+                    author=article["author"],
+                    publishedAt=article["publishedAt"],
+                    category=None,  # API may not give category
+                    imageUrl=article["imageUrl"],
+                    readTime=None,  # could be computed later
+                )
+                db.add(new_article)
+                db.commit()
+                db.refresh(new_article)
+                saved_articles.append(new_article)
+            else:
+                saved_articles.append(existing)
+
+        # Return articles in JSON-friendly format
+        return [
+            {
+                "id": a.id,
+                "title": a.title,
+                "summary": a.summary,
+                "content": a.content,
+                "author": a.author,
+                "publishedAt": a.publishedAt,
+                "imageUrl": a.imageUrl,
+            }
+            for a in saved_articles
+        ]
+
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
 
 
 @app.post("/history")
@@ -135,12 +180,26 @@ def add_history(
     if not news:
         raise HTTPException(status_code=404, detail="News not found")
 
+    # ✅ Prevent duplicates
+    existing = db.query(models.History).filter(
+        models.History.user_id == current_user.id,
+        models.History.news_id == entry.news_id
+    ).first()
+
+    if existing:
+        return {
+            "ok": True,
+            "message": "Already in history",
+            "history_id": existing.id
+        }
+
     new_history = models.History(user_id=current_user.id, news_id=entry.news_id)
     db.add(new_history)
     db.commit()
     db.refresh(new_history)
 
     return {"ok": True, "history_id": new_history.id}
+
 
 
 @app.get("/history")

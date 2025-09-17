@@ -39,9 +39,4 @@ def get_news_headlines(country: str = COUNTRY) -> list[dict]:
     return articles
 
 
-# if __name__ == "__main__":
-#     headlines = get_news_headlines()
-#     print(f"Fetched {len(headlines)} articles:\n")
-    
-#     for article in headlines[:5]:  # show only first 5
-#         print(f"- {article['title']} ({article['publishedAt']})")
+
