@@ -6,6 +6,7 @@ import db
 import models
 from news import get_news_headlines
 import secrets, hashlib
+from datetime import datetime
 
 # Make sure tables exist
 models.Base.metadata.create_all(bind=db.engine)
@@ -127,10 +128,18 @@ def read_news(
 
         saved_articles = []
         for article in articles:
+            # Convert publishedAt string to datetime
+            published_at = None
+            if article.get("publishedAt"):
+                try:
+                    published_at = datetime.strptime(article["publishedAt"], "%Y-%m-%dT%H:%M:%SZ")
+                except ValueError:
+                    published_at = None  # fallback if format is unexpected
+
             # Check if article already exists (avoid duplicates)
             existing = db.query(models.News).filter(
                 models.News.title == article["title"],
-                models.News.publishedAt == article["publishedAt"]
+                models.News.publishedAt == published_at
             ).first()
 
             if not existing:
@@ -139,7 +148,7 @@ def read_news(
                     summary=article["summary"],
                     content=article["content"],
                     author=article["author"],
-                    publishedAt=article["publishedAt"],
+                    publishedAt=published_at,
                     category=None,  # API may not give category
                     imageUrl=article["imageUrl"],
                     readTime=None,  # could be computed later
@@ -159,7 +168,7 @@ def read_news(
                 "summary": a.summary,
                 "content": a.content,
                 "author": a.author,
-                "publishedAt": a.publishedAt,
+                "publishedAt": a.publishedAt.isoformat() if a.publishedAt else None,
                 "imageUrl": a.imageUrl,
             }
             for a in saved_articles
