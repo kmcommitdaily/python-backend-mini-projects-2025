@@ -36,29 +36,35 @@ export class AuthService {
     email: string,
     password: string,
   ): Promise<{ user: User | null; error: string | null }> {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 500))
+    try {
+      const res = await fetch("http://localhost:8000/signup", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          username: name,  // ✅ backend expects "username"
+          email,
+          password,
+      }),
+      })
+      
+      if (!res.ok) {
+        const err = await res.json()
+        return   { user: null, error: err.detail || "Signup failed" }
+      }
 
-    const users = this.getStoredUsers()
-
-    if (users.find((u) => u.email === email)) {
-      return { user: null, error: "Email already exists" }
+     const data = await res.json()
+     const user = {
+        id: data.user_id,
+        email,
+        name: data.username,
     }
+     localStorage.setItem(this.USER_KEY, JSON.stringify(user))
 
-    const newUser = {
-      id: Date.now().toString(),
-      name,
-      email,
-      password,
-    }
+     return { user, error: null }
 
-    users.push(newUser)
-    localStorage.setItem(this.USERS_KEY, JSON.stringify(users))
-
-    const { password: _, ...userWithoutPassword } = newUser
-    localStorage.setItem(this.USER_KEY, JSON.stringify(userWithoutPassword))
-
-    return { user: userWithoutPassword, error: null }
+    } catch (err) {
+    return { user: null, error: "Network error" }
+  }
   }
 
   static logout(): void {
