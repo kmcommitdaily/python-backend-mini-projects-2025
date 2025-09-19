@@ -37,6 +37,7 @@ export class AuthService {
     const user = {
         id: data.user_id,
         email: data.email,
+        name: data.username,
         token: data.session_token
     }
 

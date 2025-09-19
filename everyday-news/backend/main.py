@@ -107,7 +107,7 @@ def login(data: LoginRequest, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(user)
 
-    return {"ok": True, "user_id": user.id, "email": user.email, "session_token": token}
+    return {"ok": True, "user_id": user.id, "email": user.email,"username": user.username, "session_token": token}
 
 
 @app.post("/logout")
