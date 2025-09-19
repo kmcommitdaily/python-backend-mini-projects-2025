@@ -74,25 +74,34 @@ class HistoryCreate(BaseModel):
 # --- Auth Endpoints ---
 @app.post("/signup")
 def signup(user: SignupRequest, db: Session = Depends(get_db)):
+    # Check if username or email already exists
     existing = db.query(models.User).filter(
-        (models.User.username == user.username) | 
+        (models.User.username == user.username) |
         (models.User.email == user.email)
     ).first()
 
     if existing:
         raise HTTPException(status_code=400, detail="Username or email already taken")
 
+    # Create new user with a session token (auto-login)
     new_user = models.User(
         username=user.username,
         email=user.email,
         password=hash_password(user.password),
-        session_token=None
+        session_token=secrets.token_hex(16)  # generate token
     )
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
 
-    return {"ok": True, "user_id": new_user.id, "username": new_user.username}
+    # Return token so frontend can save it in localStorage
+    return {
+        "ok": True,
+        "user_id": new_user.id,
+        "username": new_user.username,
+        "email": new_user.email,
+        "session_token": new_user.session_token
+    }
 
 
 @app.post("/login")
