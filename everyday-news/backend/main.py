@@ -64,7 +64,7 @@ class SignupRequest(BaseModel):
     password: str
 
 class LoginRequest(BaseModel):
-    username: str
+    email: str
     password: str
 
 class HistoryCreate(BaseModel):
@@ -97,17 +97,17 @@ def signup(user: SignupRequest, db: Session = Depends(get_db)):
 
 @app.post("/login")
 def login(data: LoginRequest, db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.username == data.username).first()
+    user = db.query(models.User).filter(models.User.email == data.email).first()
 
     if not user or user.password != hash_password(data.password):
-        raise HTTPException(status_code=401, detail="Invalid username or password")
+        raise HTTPException(status_code=401, detail="Invalid email or password")
 
     token = generate_token()
     user.session_token = token
     db.commit()
     db.refresh(user)
 
-    return {"ok": True, "user_id": user.id, "username": user.username, "session_token": token}
+    return {"ok": True, "user_id": user.id, "email": user.email, "session_token": token}
 
 
 @app.post("/logout")
