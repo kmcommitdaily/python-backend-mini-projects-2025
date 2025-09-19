@@ -1,7 +1,8 @@
 export interface User {
   id: string
   email: string
-  name: string
+  name?: string
+  token?: string
 }
 
 export class AuthService {
@@ -17,20 +18,34 @@ export class AuthService {
 
   static async login(email: string, password: string): Promise<{ user: User | null; error: string | null }> {
     // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 500))
+   try{
+    const res = await fetch("http://localhost:8000/login", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+          email,
+          password,
+      }),
+    })
 
-    const users = this.getStoredUsers()
-    const user = users.find((u) => u.email === email && u.password === password)
-
-    if (user) {
-      const { password: _, ...userWithoutPassword } = user
-      localStorage.setItem(this.USER_KEY, JSON.stringify(userWithoutPassword))
-      return { user: userWithoutPassword, error: null }
+    if (!res.ok) {
+      const err = await res.json()
+      return   { user: null, error: err.detail || "Login failed" }
     }
 
-    return { user: null, error: "Invalid email or password" }
-  }
+    const data = await res.json()
+    const user = {
+        id: data.user_id,
+        email: data.email,
+        token: data.session_token
+    }
 
+    return {user, error: null}
+
+   } catch(err) {
+    return { user: null, error: "Invalid email or password" }
+   }
+  }
   static async register(
     name: string,
     email: string,
