@@ -1,19 +1,24 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, User, Calendar } from "lucide-react"
-import { type Article, formatDate } from "@/lib/news"
-import Image from "next/image"
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, User, Calendar } from "lucide-react";
+import { type Article, formatDate } from "@/lib/news";
+import Image from "next/image";
 
 interface ArticleDetailProps {
-  article: Article
-  isRead: boolean
-  onBack: () => void
-  onMarkAsRead: () => void
+  article: Article;
+  isRead: boolean;
+  onBack: () => void;
+  onMarkAsRead: () => void;
 }
 
-export function ArticleDetail({ article, isRead, onBack, onMarkAsRead }: ArticleDetailProps) {
+export function ArticleDetail({
+  article,
+  isRead,
+  onBack,
+  onMarkAsRead,
+}: ArticleDetailProps) {
   return (
     <div className="max-w-4xl mx-auto">
       <div className="mb-6">
@@ -27,11 +32,10 @@ export function ArticleDetail({ article, isRead, onBack, onMarkAsRead }: Article
         </Button>
 
         <div className="relative h-64 md:h-96 w-full overflow-hidden rounded-lg mb-6">
-          <Image
+          <img
             src={article.imageUrl || "/placeholder.svg"}
             alt={article.title}
-            fill
-            className="object-cover"
+            className="object-cover w-full h-full"
           />
         </div>
 
@@ -76,12 +80,8 @@ export function ArticleDetail({ article, isRead, onBack, onMarkAsRead }: Article
       </div>
 
       <div className="prose prose-lg max-w-none">
-        {article.content.split("\n\n").map((paragraph, index) => (
-          <p key={index} className="mb-4 leading-relaxed text-pretty">
-            {paragraph}
-          </p>
-        ))}
+        <p className="mb-4 leading-relaxed text-pretty">{article.summary}</p>
       </div>
     </div>
-  )
+  );
 }
