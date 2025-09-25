@@ -1,27 +1,34 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { LogOut, BookOpen, Newspaper } from "lucide-react"
-import { useAuth } from "@/hooks/use-auth"
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { LogOut, BookOpen, Newspaper } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 
 interface NewsHeaderProps {
-  currentView: "all" | "read"
-  onViewChange: (view: "all" | "read") => void
-  readCount: number
+  currentView: "all" | "read";
+  onViewChange: (view: "all" | "read") => void;
+  readCount: number;
 }
 
-export function NewsHeader({ currentView, onViewChange, readCount }: NewsHeaderProps) {
-  const { user, logout } = useAuth()
+export function NewsHeader({
+  currentView,
+  onViewChange,
+  readCount,
+}: NewsHeaderProps) {
+  const { user, logout } = useAuth();
 
   return (
-    <header className="border-b sticky top-0 z-10 shadow-lg" style={{ backgroundColor: "#302e7c" }}>
+    <header
+      className="border-b sticky top-0 z-10 shadow-lg"
+      style={{ backgroundColor: "#302e7c" }}
+    >
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Newspaper className="h-8 w-8" style={{ color: "#ffffff" }} />
             <h1 className="text-2xl font-bold" style={{ color: "#ffffff" }}>
-              NewsReader
+              EverydayNews
             </h1>
           </div>
 
@@ -34,7 +41,11 @@ export function NewsHeader({ currentView, onViewChange, readCount }: NewsHeaderP
                 style={
                   currentView === "all"
                     ? { backgroundColor: "#ffffff", color: "#302e7c" }
-                    : { borderColor: "#ffffff", color: "#ffffff", backgroundColor: "transparent" }
+                    : {
+                        borderColor: "#ffffff",
+                        color: "#ffffff",
+                        backgroundColor: "transparent",
+                      }
                 }
                 className="hover:opacity-90"
               >
@@ -47,7 +58,11 @@ export function NewsHeader({ currentView, onViewChange, readCount }: NewsHeaderP
                 style={
                   currentView === "read"
                     ? { backgroundColor: "#ffffff", color: "#302e7c" }
-                    : { borderColor: "#ffffff", color: "#ffffff", backgroundColor: "transparent" }
+                    : {
+                        borderColor: "#ffffff",
+                        color: "#ffffff",
+                        backgroundColor: "transparent",
+                      }
                 }
                 className="relative hover:opacity-90"
               >
@@ -84,5 +99,5 @@ export function NewsHeader({ currentView, onViewChange, readCount }: NewsHeaderP
         </div>
       </div>
     </header>
-  )
+  );
 }
