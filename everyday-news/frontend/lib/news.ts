@@ -2,7 +2,7 @@
 import { AuthService } from "@/lib/auth" //
 
 export interface Article {
-  id: string
+  id: number
   title: string
   summary: string
   content: string

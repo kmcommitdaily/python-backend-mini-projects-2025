@@ -1,76 +1,38 @@
+
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import {
-  Trash2,
-  BookOpen,
-  Calendar,
-  TrendingUp,
-  ArrowLeft,
-} from "lucide-react";
-import { useReadArticles } from "@/hooks/use-read-articles";
-import { getArticles, formatDate, Article } from "@/lib/news";
+import { Card, CardContent } from "@/components/ui/card";
+import { BookOpen, Trash2, ArrowLeft } from "lucide-react";
 import { ArticleCard } from "./article-card";
-import { useEffect, useState } from "react";
+import { HistoryEntry } from "@/lib/history";
+
+
 
 interface ReadArticlesDashboardProps {
-  onArticleClick: (articleId: string) => void;
+  history: HistoryEntry[];
+  removeHistory: (historyId: number) => void;
+  onArticleClick: (articleId: number) => void;
   onBackToArticles?: () => void;
 }
 
 export function ReadArticlesDashboard({
+  history,
+  removeHistory,
   onArticleClick,
   onBackToArticles,
 }: ReadArticlesDashboardProps) {
-  const { readArticles, clearAllRead, markAsUnread } = useReadArticles();
-
-  const [allArticles, setAllArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchData() {
-      const articles = await getArticles();
-      setAllArticles(articles);
-      setLoading(false);
-    }
-    fetchData();
-  }, []);
-
-  if (loading) {
-    return (
-      <p className="text-center text-gray-500">Loading your articles...</p>
-    );
-  }
-
-  const readArticleObjects = allArticles.filter((article) =>
-    readArticles.includes(article.id)
-  );
-
-  const mostRecentRead =
-    readArticleObjects.length > 0
-      ? readArticleObjects.sort(
-          (a, b) =>
-            new Date(b.publishedAt).getTime() -
-            new Date(a.publishedAt).getTime()
-        )[0]
-      : null;
-
   return (
     <div className="space-y-6">
+     
       <div className="flex items-center gap-4">
         {onBackToArticles && (
           <Button
             variant="outline"
             size="sm"
             onClick={onBackToArticles}
-            style={{
-              borderColor: "#005195",
-              color: "#005195",
-              backgroundColor: "transparent",
-            }}
-            className="hover:bg-blue-50 hover:border-blue-400 bg-transparent"
+            className="hover:bg-blue-50 hover:border-blue-400"
+            style={{ borderColor: "#005195", color: "#005195" }}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Articles
@@ -86,94 +48,23 @@ export function ReadArticlesDashboard({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card style={{ borderColor: "#005195", backgroundColor: "#ffffff" }}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle
-              className="text-sm font-medium"
-              style={{ color: "#414141" }}
-            >
-              Articles Read
-            </CardTitle>
-            <BookOpen className="h-4 w-4" style={{ color: "#005195" }} />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold" style={{ color: "#302e7c" }}>
-              {readArticles.length}
-            </div>
-            <p className="text-xs" style={{ color: "#58595b" }}>
-              Total articles in your reading history
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {mostRecentRead && (
-        <Card style={{ borderColor: "#005195", backgroundColor: "#ffffff" }}>
-          <CardHeader>
-            <CardTitle className="text-lg" style={{ color: "#414141" }}>
-              Most Recently Read
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-start gap-4">
-              <div className="flex-1">
-                <h4 className="font-semibold mb-1" style={{ color: "#414141" }}>
-                  {mostRecentRead.title}
-                </h4>
-                <p className="text-sm mb-2" style={{ color: "#58595b" }}>
-                  {mostRecentRead.summary}
-                </p>
-                <div
-                  className="flex items-center gap-2 text-xs"
-                  style={{ color: "#58595b" }}
-                >
-                  <span>{formatDate(mostRecentRead.publishedAt)}</span>
-                </div>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onArticleClick(mostRecentRead.id)}
-                style={{
-                  borderColor: "#005195",
-                  color: "#005195",
-                  backgroundColor: "transparent",
-                }}
-                className="hover:bg-blue-50"
-              >
-                Read Again
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      <div className="flex items-center justify-between">
-        <h3 className="text-xl font-semibold" style={{ color: "#414141" }}>
-          Your Read Articles
-        </h3>
-        {readArticles.length > 0 && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={clearAllRead}
-            className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-300 bg-transparent"
-          >
-            <Trash2 className="h-4 w-4 mr-2" />
-            Clear All
-          </Button>
-        )}
-      </div>
-
-      {readArticleObjects.length > 0 ? (
+     
+      {history.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {readArticleObjects.map((article) => (
-            <div key={article.id} className="relative">
+          {history.map((entry) => (
+            <div key={entry.history_id} className="relative">
               <ArticleCard
-                article={article}
+                article={{
+                  id: entry.news_id,
+                  title: entry.title ?? "",
+                  summary: entry.summary ?? "",
+                  content: "",
+                  author: entry.author ?? "",
+                  publishedAt: entry.read_at,
+                  imageUrl: entry.imageUrl ?? "",
+                }}
                 isRead={true}
-                onClick={() => onArticleClick(article.id)}
+                onClick={() => onArticleClick(entry.news_id)}
               />
               <Button
                 variant="ghost"
@@ -181,7 +72,7 @@ export function ReadArticlesDashboard({
                 className="absolute top-2 right-2 bg-white/90 hover:bg-red-50 text-red-600 hover:text-red-700"
                 onClick={(e) => {
                   e.stopPropagation();
-                  markAsUnread(article.id);
+                  removeHistory(entry.history_id);
                 }}
               >
                 <Trash2 className="h-3 w-3" />

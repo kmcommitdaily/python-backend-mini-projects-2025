@@ -226,15 +226,22 @@ def get_user_history(
     current_user: models.User = Depends(get_current_user)
 ):
     history = db.query(models.History).filter(models.History.user_id == current_user.id).all()
-    return [
-        {
+
+    result = []
+    for h in history:
+        news = h.news
+        result.append({
             "history_id": h.id,
             "news_id": h.news_id,
-            "title": h.news.title if h.news else None,
+            "title": news.title if news else "",
+            "summary": news.summary if news else "",
+            "content": news.content if news else "",
+            "author": news.author if news else "",
+            "publishedAt": news.publishedAt if news else None,
+            "imageUrl": news.imageUrl if news else "",
             "read_at": h.read_at,
-        }
-        for h in history
-    ]
+        })
+    return result
 
 
 @app.delete("/history/{history_id}")
