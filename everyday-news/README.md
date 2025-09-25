@@ -6,9 +6,10 @@ This app fetches news articles from a backend database and allows users to track
 ---
 
 ## Features
+
 - Browse latest news articles.
 - Mark articles as read and track reading history.
-- Remove articles from reading history 
+- Remove articles from reading history
 - Reading history persisted in SQLite database.
 - Responsive UI with clean design.
 - Backend and frontend fully connected via API.
@@ -18,6 +19,7 @@ This app fetches news articles from a backend database and allows users to track
 ---
 
 ## Tech Stack
+
 - **Frontend:** React, Next.js, TypeScript, Tailwind CSS, ShadCN UI
 - **Backend:** Python, FastAPI, Uvicorn
 - **Database:** SQLite
@@ -29,6 +31,7 @@ This app fetches news articles from a backend database and allows users to track
 ## Installation & Setup
 
 ### Backend
+
 ```bash
 cd backend
 python3 -m venv venv
@@ -38,21 +41,24 @@ uvicorn main:app --reload
 ```
 
 ## Frontend
+
 1. Navigate to the frontend folder:
-    ```bash
-    `cd frontend`
-    `npm install`
+   ```bash
+   `cd frontend`
+   `npm install`
+   ```
 2. Run the frontend:
-    ```bash
-    `npm run dev`
+   ```bash
+   `npm run dev`
+   ```
 3. Open your browser at http://localhost:3000
 
 ## API Endpoints
-GET /articles           → Fetch all news articles
-GET /history            → Get user reading history
-POST /history           → Add article to reading history
-DELETE /history/{id}    → Remove article from history
 
+- GET /articles → Fetch all news articles
+- GET /history → Get user reading history
+- POST /history → Add article to reading history
+- DELETE /history/{id} → Remove article from history
 
 ## Response JSON Example (History):
 
@@ -71,16 +77,21 @@ DELETE /history/{id}    → Remove article from history
 
 ```
 
+### **_Screenshots_**
 
-### ***Screenshots***
+## Homepage
+
 ![WatchPick home page Screenshot](assets/homepage.png)
+
+## Read Section
+
 ![WatchPick home page Screenshot](assets/read-section.png)
 
 ## Future Improvements
+
 - Integrate external news APIs for live articles.
 - Integrate external news APIs for live articles.
 - Deploy backend (Railway/Render) and frontend (Vercel).
-
 
 ### AUTHOR
 
