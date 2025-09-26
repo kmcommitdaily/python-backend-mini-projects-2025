@@ -1,4 +1,3 @@
-
 export interface WeatherData {
   city: string;
   temperature: number;
@@ -9,24 +8,18 @@ export interface WeatherData {
   feelsLike: number;
 }
 
+export async function getWeather(city: string): Promise<WeatherData> {
+  const response = await fetch(
+    `http://localhost:8000/weather?city=${encodeURIComponent(city)}`
+  );
 
-export async function getWeather(city: string): Promise<WeatherData>  {
-    const response = await fetch("http://localhost:8000/weather", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          city
-        })
-    })
-
-    if (!response.ok) {
+  if (!response.ok) {
     throw new Error("Failed to fetch weather data");
   }
 
-  const data = await response.json()
+  const data = await response.json();
   const visibility_m = data.visibility ?? 0;
   const visibility_km = visibility_m / 1000;
-
 
   return {
     city: data.city,
@@ -37,5 +30,4 @@ export async function getWeather(city: string): Promise<WeatherData>  {
     visibility: visibility_km,
     feelsLike: data.feels_like, // match your backend JSON keys
   };
-  
 }
