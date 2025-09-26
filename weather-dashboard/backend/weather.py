@@ -1,8 +1,8 @@
-# weather.py
+
 import os
 import requests
 from dotenv import load_dotenv
-from pprint import pprint
+
 load_dotenv()
 API_KEY = os.getenv("OPENWEATHER_API_KEY")
 unit = os.getenv("DEFAULT_UNIT")
@@ -17,7 +17,6 @@ def get_weather(city: str):
     
     if response.status_code == 200:
         data = response.json()
-        # pprint(data)
         return {
             "city": data["name"],
             "temp": data["main"]["temp"],

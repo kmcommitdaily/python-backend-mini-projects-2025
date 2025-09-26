@@ -16,41 +16,8 @@ import {
   Droplets,
   Thermometer,
 } from "lucide-react";
+import { useWeather } from "@/hooks/use-weather";
 
-interface WeatherData {
-  city: string;
-  temperature: number;
-  description: string;
-  humidity: number;
-  windSpeed: number;
-  visibility: number;
-  feelsLike: number;
-}
-
-// Mock function to simulate backend call
-const getWeather = async (city: string): Promise<WeatherData> => {
-  // Simulate API delay
-  const res = await fetch(
-    `http://localhost:8000/weather?city=${encodeURIComponent(city)}`
-  );
-  if (!res.ok) {
-    throw new Error("Failed to fetch weather data");
-  }
-
-  const data = await res.json();
-  const visibility_m = data.visibility ?? 0;
-  const visibility_km = visibility_m / 1000;
-
-  return {
-    city: data.city,
-    temperature: data.temperature,
-    description: data.weather,
-    humidity: data.humidity,
-    windSpeed: data.wind,
-    visibility: visibility_km,
-    feelsLike: data.feels_like, // match your backend JSON keys
-  };
-};
 
 const getWeatherIcon = (description: string) => {
   const iconClass = "h-8 w-8 text-primary";
@@ -66,33 +33,24 @@ const getWeatherIcon = (description: string) => {
   return <Sun className={iconClass} />;
 };
 
+
+
 export default function WeatherDashboard() {
   const [city, setCity] = useState("");
-  const [weather, setWeather] = useState<WeatherData | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [searchCity, setSearchCity] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const {weather, loading, error} = useWeather(city)
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!city.trim()) return;
-
-    setLoading(true);
-    setError("");
-
-    try {
-      const weatherData = await getWeather(city.trim());
-      setWeather(weatherData);
-    } catch (err) {
-      setError("Failed to fetch weather data. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    setSearchCity(city.trim());
   };
 
   return (
     <div className="min-h-screen bg-background p-4 flex items-center justify-center">
       <div className="w-full max-w-md space-y-6">
-        {/* Header */}
+        
         <div className="text-center space-y-2">
           <h1 className="text-2xl font-bold text-foreground">
             Weather Dashboard
@@ -102,7 +60,7 @@ export default function WeatherDashboard() {
           </p>
         </div>
 
-        {/* Search Form */}
+        
         <Card>
           <CardContent className="p-6">
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -139,7 +97,7 @@ export default function WeatherDashboard() {
           </CardContent>
         </Card>
 
-        {/* Weather Display */}
+        
         {weather && (
           <Card>
             <CardHeader className="pb-3">
@@ -149,7 +107,7 @@ export default function WeatherDashboard() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Main Weather Info */}
+              
               <div className="text-center space-y-1">
                 <div className="text-3xl font-bold text-primary">
                   {weather.temperature}°C
