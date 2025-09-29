@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { User } from "lucide-react";
 import { type Article, formatDate } from "@/lib/news";
-import Image from "next/image";
+
 
 interface ArticleCardProps {
   article: Article;

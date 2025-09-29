@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, User, Calendar } from "lucide-react";
 import { type Article, formatDate } from "@/lib/news";
-import Image from "next/image";
+
 
 interface ArticleDetailProps {
   article: Article;

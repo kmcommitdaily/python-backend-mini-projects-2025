@@ -19,7 +19,7 @@ export class AuthService {
     email: string,
     password: string
   ): Promise<{ user: User | null; error: string | null }> {
-    // Simulate API delay
+ 
     try {
       const res = await fetch("http://localhost:8000/login", {
         method: "POST",
@@ -59,7 +59,7 @@ export class AuthService {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          username: name, // ✅ backend expects "username"
+          username: name, 
           email,
           password,
         }),
@@ -93,7 +93,7 @@ export class AuthService {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${currentUser.token}`, // ✅ send token for backend to identify user
+            Authorization: `Bearer ${currentUser.token}`,
           },
         });
         const data = await res.json();
@@ -102,7 +102,7 @@ export class AuthService {
     } catch (err) {
       console.error("Logout failed:", err);
     } finally {
-      // ✅ Always clear local storage
+
       localStorage.removeItem(this.USER_KEY);
     }
   }

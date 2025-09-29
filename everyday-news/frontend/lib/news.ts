@@ -1,5 +1,5 @@
 
-import { AuthService } from "@/lib/auth" //
+import { AuthService } from "@/lib/auth" 
 
 export interface Article {
   id: number
@@ -28,7 +28,7 @@ export async function getArticles(): Promise<Article[]> {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,  // ✅ correct token
+        Authorization: `Bearer ${token}`,  
       },
     });
 

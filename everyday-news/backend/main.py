@@ -8,12 +8,12 @@ from news import get_news_headlines
 import secrets, hashlib
 from datetime import datetime
 
-# Make sure tables exist
+
 models.Base.metadata.create_all(bind=db.engine)
 
 app = FastAPI()
 
-# Dependency: get DB session
+
 def get_db():
     database = db.SessionLocal()
     try:
@@ -22,7 +22,6 @@ def get_db():
         database.close()
 
 
-# Enable CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -32,7 +31,7 @@ app.add_middleware(
 )
 
 
-# --- Helper functions ---
+
 def hash_password(password: str) -> str:
     return hashlib.sha256(password.encode()).hexdigest()
 
@@ -40,7 +39,7 @@ def generate_token() -> str:
     return secrets.token_hex(16)
 
 
-# --- Auth dependency ---
+
 def get_current_user(
     db: Session = Depends(get_db),
     authorization: str = Header(None)
@@ -57,7 +56,6 @@ def get_current_user(
     return user
 
 
-# --- Pydantic Schemas ---
 class SignupRequest(BaseModel):
     username: str
     email: str
@@ -71,10 +69,10 @@ class HistoryCreate(BaseModel):
     news_id: int
 
 
-# --- Auth Endpoints ---
+
 @app.post("/signup")
 def signup(user: SignupRequest, db: Session = Depends(get_db)):
-    # Check if username or email already exists
+  
     existing = db.query(models.User).filter(
         (models.User.username == user.username) |
         (models.User.email == user.email)
@@ -83,18 +81,18 @@ def signup(user: SignupRequest, db: Session = Depends(get_db)):
     if existing:
         raise HTTPException(status_code=400, detail="Username or email already taken")
 
-    # Create new user with a session token (auto-login)
+
     new_user = models.User(
         username=user.username,
         email=user.email,
         password=hash_password(user.password),
-        session_token=secrets.token_hex(16)  # generate token
+        session_token=secrets.token_hex(16)
     )
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
 
-    # Return token so frontend can save it in localStorage
+  
     return {
         "ok": True,
         "user_id": new_user.id,
@@ -126,7 +124,7 @@ def logout(current_user: models.User = Depends(get_current_user), db: Session = 
     return {"ok": True, "message": "Logged out"}
 
 
-# --- Protected Endpoints ---
+
 @app.get("/news")
 def read_news(
     db: Session = Depends(get_db),
@@ -137,15 +135,14 @@ def read_news(
 
         saved_articles = []
         for article in articles:
-            # Convert publishedAt string to datetime
+           
             published_at = None
             if article.get("publishedAt"):
                 try:
                     published_at = datetime.strptime(article["publishedAt"], "%Y-%m-%dT%H:%M:%SZ")
                 except ValueError:
-                    published_at = None  # fallback if format is unexpected
+                    published_at = None  
 
-            # Check if article already exists (avoid duplicates)
             existing = db.query(models.News).filter(
                 models.News.title == article["title"],
                 models.News.publishedAt == published_at
@@ -158,9 +155,9 @@ def read_news(
                     content=article["content"],
                     author=article["author"],
                     publishedAt=published_at,
-                    category=None,  # API may not give category
+                    category=None, 
                     imageUrl=article["imageUrl"],
-                    readTime=None,  # could be computed later
+                    readTime=None, 
                 )
                 db.add(new_article)
                 db.commit()
@@ -169,7 +166,7 @@ def read_news(
             else:
                 saved_articles.append(existing)
 
-        # Return articles in JSON-friendly format
+       
         return [
             {
                 "id": a.id,
