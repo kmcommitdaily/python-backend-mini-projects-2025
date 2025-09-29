@@ -21,7 +21,7 @@ export default function MovieFavoritesApp() {
   const [showFavorites, setShowFavorites] = useState(false);
   const [movies, setMovies] = useState<Movie[]>([]);
 
-  // load saved favorites from backend on mount
+
 
   async function loadFavorites() {
     try {
@@ -37,7 +37,7 @@ export default function MovieFavoritesApp() {
     }
   }
 
-  // useEffect calls it on mount
+
   useEffect(() => {
     loadFavorites();
   }, []);
@@ -73,7 +73,7 @@ export default function MovieFavoritesApp() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(movie), // send the whole movie object
+        body: JSON.stringify(movie), 
       });
 
       if (!res.ok) {
@@ -82,7 +82,7 @@ export default function MovieFavoritesApp() {
         return;
       }
 
-      await loadFavorites(); // update state with the saved movie
+      await loadFavorites();
     } catch (error) {
       console.error("Error adding favorite:", error);
     }
@@ -100,7 +100,7 @@ export default function MovieFavoritesApp() {
         return;
       }
 
-      // update state only if backend delete worked
+  
       await loadFavorites();
     } catch (error) {
       console.error("Error removing favorite:", error);

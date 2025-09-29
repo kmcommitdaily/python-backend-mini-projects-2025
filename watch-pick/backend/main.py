@@ -22,13 +22,13 @@ def get_db():
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In dev, allow all origins (React, V0, etc.)
+    allow_origins=["*"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# --- Pydantic schema for request body ---
+
 class FavoriteCreate(BaseModel):
     imdbID: str
     Title: str
@@ -36,7 +36,7 @@ class FavoriteCreate(BaseModel):
     Type: str
     Poster: str
 
-#POST Favorites
+
 @app.post("/favorites")
 def add_favorite(fav: FavoriteCreate, db: Session = Depends(get_db)):
    
@@ -62,7 +62,7 @@ def add_favorite(fav: FavoriteCreate, db: Session = Depends(get_db)):
         "Type": new_fav.type,
         "Poster": new_fav.poster,
     }
-#GET Movies
+
 @app.get("/movies")
 
 def movies_endpoint(title: str):
@@ -71,7 +71,7 @@ def movies_endpoint(title: str):
     except Exception as e:
         raise HTTPException(status_code=400,  detail=str(e))
     
-#GET Favorites
+
 @app.get("/favorites")
 def read_favorites(db: Session = Depends(get_db)):
     favorites = db.query(models.Favorite).all()
@@ -87,7 +87,6 @@ def read_favorites(db: Session = Depends(get_db)):
     ]
 
 
-# ✅ DELETE /favorites/{imdbID}
 @app.delete("/favorites/{imdbID}")
 def delete_favorite(imdbID: str, db: Session = Depends(get_db)):
     movie = db.query(models.Favorite).filter(models.Favorite.imdbID == imdbID).first()
