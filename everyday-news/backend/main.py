@@ -195,7 +195,7 @@ def add_history(
     if not news:
         raise HTTPException(status_code=404, detail="News not found")
 
-    # ✅ Prevent duplicates
+
     existing = db.query(models.History).filter(
         models.History.user_id == current_user.id,
         models.History.news_id == entry.news_id

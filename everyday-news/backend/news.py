@@ -5,13 +5,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 API_KEY = os.getenv("NEWS_API_KEY")
-COUNTRY = "us"  # default country for headlines
+COUNTRY = "us"  
 
 def get_news_headlines(country: str = COUNTRY) -> list[dict]:
-    """
-    Fetch top news headlines for a given country.
-    Intended for display when a user logs in.
-    """
     url = f"https://newsapi.org/v2/top-headlines?country={country}&apiKey={API_KEY}"
 
     response = requests.get(url)
